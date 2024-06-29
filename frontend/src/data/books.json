@@ -1,0 +1,63 @@
+[
+    {
+      "title": "To Kill a Mockingbird",
+      "author": "Harper Lee",
+      "yearPublished": 1960,
+      "category": "Fiction"
+    },
+    {
+      "title": "1984",
+      "author": "George Orwell",
+      "yearPublished": 1949,
+      "category": "Science Fiction"
+    },
+    {
+      "title": "Pride and Prejudice",
+      "author": "Jane Austen",
+      "yearPublished": 1813,
+      "category": "Romance"
+    },
+    {
+      "title": "The Catcher in the Rye",
+      "author": "J.D. Salinger",
+      "yearPublished": 1951,
+      "category": "Fiction"
+    },
+    {
+      "title": "Harry Potter and the Philosopher's Stone",
+      "author": "J.K. Rowling",
+      "yearPublished": 1997,
+      "category": "Fantasy"
+    },
+    {
+      "title": "The Lord of the Rings",
+      "author": "J.R.R. Tolkien",
+      "yearPublished": 1954,
+      "category": "Fantasy"
+    },
+    {
+      "title": "Brave New World",
+      "author": "Aldous Huxley",
+      "yearPublished": 1932,
+      "category": "Science Fiction"
+    },
+    {
+      "title": "The Da Vinci Code",
+      "author": "Dan Brown",
+      "yearPublished": 2003,
+      "category": "Mystery"
+    },
+    {
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "yearPublished": 1925,
+      "category": "Fiction"
+    },
+    {
+      "title": "The Hobbit",
+      "author": "J.R.R. Tolkien",
+      "yearPublished": 1937,
+      "category": "Fantasy"
+    }
+  ]
+  
