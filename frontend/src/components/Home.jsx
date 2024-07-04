@@ -10,6 +10,8 @@ const Home = () => {
       yearPublished: "",
       category: "",
       summary: "",
+      fetched: false,
+      clicked: false
     }
   )
   const handleSummaryClicked = () => {
@@ -18,7 +20,8 @@ const Home = () => {
 
   const handleSummaryDetails = (details) => {
     setSummary(details)
-    handleSummaryClicked()
+    if(details.clicked && !details.fetched)
+        handleSummaryClicked()
   }
 
   return (

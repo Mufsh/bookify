@@ -1,21 +1,47 @@
 import { useEffect, useState } from "react";
+import {  useNavigate } from "react-router-dom";
 
 const TableRow = ({ data, onSave, handleDeleteClick, handleSummaryDetails }) => {
     const [rowData, setRowData] = useState(data);
     const [isEditing, setIsEditing] = useState(false);
-
+    const navigate = useNavigate()
+    
     const handleEditClick = () => {
         setIsEditing(true);
     };
 
     const handleSaveClick = () => {
-        setIsEditing(false);
         onSave(rowData);
+        setIsEditing(false);
     };
 
-    const handleGenerateSummaryClick = (rowData) => {
-        const details = {...rowData, ["summary"]: "This is the summary"}
-        handleSummaryDetails(details)
+    const handleGenerateSummaryClick = async (rowData) => {
+        const preFetchedDetails = {...rowData,  ["clicked"]: true, ["fetched"]: false}
+        handleSummaryDetails(preFetchedDetails)
+        try {
+            const response = await fetch(
+                `http://localhost:8000/books/generate-summary/${rowData.title}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            const data = await response.json();
+            console.log(data)
+            if(data.success){
+                const details = {...rowData, ["summary"]: data.summary, ["clicked"]: true, ["fetched"]: true}
+                handleSummaryDetails(details)
+            }else{
+                alert("Error in generating summary.")
+            }
+        } catch (error) {
+            alert("Error in generating summary")
+            navigate("/")
+            console.error("Error in generating summary:", error);
+        }
     }
 
     const handleInputChange = (e, fieldName) => {
@@ -33,7 +59,7 @@ const TableRow = ({ data, onSave, handleDeleteClick, handleSummaryDetails }) => 
         <tr className="border-b border-gray-200 bg-slate-300 dark:bg-slate-600 overflow-scroll">
             {Object.keys(rowData).map((fieldName, index) => (
                 <td key={index} className="px-4 py-2 w-1/17 ">
-                    {isEditing ? (
+                    {isEditing && fieldName !== "title" ? (
                         <input
                             type="text"
                             value={rowData[fieldName]}
@@ -77,7 +103,7 @@ const TableRow = ({ data, onSave, handleDeleteClick, handleSummaryDetails }) => 
             </td>
             <td className="px-4 py-2 w-1/17">
                 <button
-                    onClick={() => handleDeleteClick(rowData["email"])}
+                    onClick={() => handleDeleteClick(rowData["title"])}
                     className="bg-red-400 hover:bg-red-600 dark:bg-red-700 dark:hover:bg-red-900 text-white font-bold py-1 px-4 rounded"
                 >
                     Delete
