@@ -1,18 +1,92 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TableRow from "./TableRow";
-import data from '../data/books.json';
 
-const Table = ({ handleSummaryDetails}) => {
+const Table = ({ handleSummaryDetails }) => {
 
-    const [rows, setRows] = useState(data)
+    const [rows, setRows] = useState([])
 
-    const handleSave = (updatedData) => {
-        rows.push(updatedData)
-        setRows(rows)
+    useEffect(() => {
+        const fetchBooks = async () => {
+            try {
+                const response = await fetch(
+                    "http://localhost:8000/api/viewall",
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+
+                const data = await response.json();
+                if (data.success) {
+                    console.log(data);
+                    const books = data.data
+                    const transformedBooks = books.map(book => ({
+                        title: book.title,
+                        author: book.author,
+                        yearPublished: book.year,
+                        category: book.category
+                    }))
+                    setRows(transformedBooks);
+                }
+            } catch (error) {
+                console.error("Error fetching books:", error);
+            }
+        };
+
+        fetchBooks();
+    }, []);
+
+    const handleSave = async (updatedData) => {
+        
+        console.log("title: ", updatedData)
+        
+        const formData = new FormData()
+        formData.append('title', updatedData.title)
+        formData.append('author', updatedData.author)
+        formData.append('year', parseInt(updatedData.yearPublished))
+        formData.append('category', updatedData.category)
+        console.log("formData: ", formData.yearPublished)
+        try {
+            const response = await fetch("http://localhost:8000/books/update", {
+                method: "PUT",
+                body: formData
+            });
+      
+            const data = await response.json();
+            console.log(data);
+            if (data.success) {
+                alert(data.message, data.book);
+                rows.push(updatedData)
+                setRows(rows)
+            } else {
+                alert("Operation failed. Please try again. " + data.message);
+            }
+          } catch (error) {
+            console.error("Error:", error);
+          }
     };
 
-    const handleDeleteClick = (email) => {
-        const updatedData = rows.filter(row => row.email !== email);
+    const handleDeleteClick = async (title) => {
+        const updatedData = rows.filter(row => row.title !== title);
+        try {
+            const response = await fetch(
+                `http://localhost:8000/books/delete/${title}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            const data = await response.json();
+            console.log(data)
+            alert("Book deleted from database.")
+        } catch (error) {
+            console.error("Error deleting book:", error);
+        }
         setRows(updatedData);
     }
 
@@ -52,8 +126,8 @@ const Table = ({ handleSummaryDetails}) => {
                                     key={index}
                                     data={rowData}
                                     onSave={handleSave}
-                                    handleDeleteClick = {handleDeleteClick}
-                                    handleSummaryDetails = {handleSummaryDetails}
+                                    handleDeleteClick={handleDeleteClick}
+                                    handleSummaryDetails={handleSummaryDetails}
                                 />
                             );
                         })

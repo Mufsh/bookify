@@ -12,6 +12,8 @@ const AddBook = () => {
 
   const [selectedFile, setSelectedFile] = useState(null);
 
+  const [addClciked, setAddClicked] = useState(false)
+
   const handleFileChange = (e) => {
     const file = e.target.files && e.target.files[0];
     if (file && file.type === "application/pdf") {
@@ -24,24 +26,27 @@ const AddBook = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setAddClicked(!addClciked)
+    const formDataFinal = new FormData();
+    formDataFinal.append('title', formData.title);
+    formDataFinal.append('author', formData.author);
+    formDataFinal.append('year', formData.year);
     if (selectedFile) {
-      formData.append("file", selectedFile);
+      formData["file"] = selectedFile
+      formDataFinal.append("file", selectedFile);
       console.log("Uploading file...", formData);
     }
-
+    console.log("formDataFinal: ", formDataFinal)
     try {
-      const response = await fetch("https://localhost:8000/addbook", {
+      const response = await fetch("http://localhost:8000/addbook", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        body: formDataFinal
       });
 
       const data = await response.json();
-      console.log(data); // Handle response from backend
+      console.log(data);
       if (data.success) {
-        alert(data.message);
+        alert("Book added successfully");
         navigate("/");
       } else {
         alert("Operation failed. Please try again. " + data.message);
@@ -142,7 +147,20 @@ const AddBook = () => {
                 type="submit"
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
               >
-                Add Book
+                {
+                  addClciked ? (<div
+                    class="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                    role="status">
+                    <span
+                      class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                    >Loading...</span>
+                  </div>) : (
+                    <>
+                      Add Book
+                    </>
+
+                  )
+                }
               </button>
             </div>
           </form>
